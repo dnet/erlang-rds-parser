@@ -38,13 +38,11 @@ try_bits(_, State) -> State.
 
 check_word(Subject, Expected, Pos) ->
 	Reg = cwp1(Subject),
-	%io:format("~p =?= ~p\n", [Expected, cwp2(Reg)]),
 	Expected == cwp2(Reg) bxor offset_word(Pos).
 
 cwp1(Subject) -> cwp1(Subject, 0).
 cwp1(<<>>, Acc) -> Acc;
 cwp1(<<Bit:1, Rest/bits>>, Acc) ->
-	%io:format("bit: ~p\n", [Bit]),
 	Tmp = Acc bsl 1 bor Bit,
 	NewAcc = case Tmp band (1 bsl ?PLEN) of
 		0 -> Tmp;
