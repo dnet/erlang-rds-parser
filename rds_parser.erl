@@ -43,9 +43,7 @@ cwp1(Subject) -> cwp1(Subject, 0).
 cwp1(<<>>, Acc) -> Acc;
 cwp1(<<Bit:1, Rest/bits>>, Acc) -> cwp1(Rest, xor_poly(Acc bsl 1 bor Bit)).
 
-cwp2(Reg) -> cwp2(Reg, ?PLEN).
-cwp2(Reg, 0) -> Reg band ((1 bsl ?PLEN) - 1);
-cwp2(Reg, Iter) -> cwp2(xor_poly(Reg bsl 1), Iter - 1).
+cwp2(Subject) -> cwp1(<<0:?PLEN>>, Subject) band ((1 bsl ?PLEN) - 1).
 
 xor_poly(X) when X band (1 bsl ?PLEN) =:= 0 -> X;
 xor_poly(X) -> X bxor ?POLY.
