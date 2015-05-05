@@ -37,13 +37,12 @@ try_bits(_, State) -> State.
 -define(PLEN, 10).
 
 check_word(Subject, Expected, Pos) ->
-	Expected == cwp2(cwp1(Subject)) bxor offset_word(Pos).
+	Expected == cwp(Subject) bxor offset_word(Pos).
 
-cwp1(Subject) -> cwp1(Subject, 0).
-cwp1(<<>>, Acc) -> Acc;
-cwp1(<<Bit:1, Rest/bits>>, Acc) -> cwp1(Rest, xor_poly(Acc bsl 1 bor Bit)).
+cwp(Subject) -> cwp(<<0:?PLEN>>, cwp(Subject, 0)) band ((1 bsl ?PLEN) - 1).
 
-cwp2(Subject) -> cwp1(<<0:?PLEN>>, Subject) band ((1 bsl ?PLEN) - 1).
+cwp(<<>>, Acc) -> Acc;
+cwp(<<Bit:1, Rest/bits>>, Acc) -> cwp(Rest, xor_poly(Acc bsl 1 bor Bit)).
 
 xor_poly(X) when X band (1 bsl ?PLEN) =:= 0 -> X;
 xor_poly(X) -> X bxor ?POLY.
