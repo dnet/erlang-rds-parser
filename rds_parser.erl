@@ -37,8 +37,7 @@ try_bits(_, State) -> State.
 -define(PLEN, 10).
 
 check_word(Subject, Expected, Pos) ->
-	Reg = cwp1(Subject),
-	Expected == cwp2(Reg) bxor offset_word(Pos).
+	Expected == cwp2(cwp1(Subject)) bxor offset_word(Pos).
 
 cwp1(Subject) -> cwp1(Subject, 0).
 cwp1(<<>>, Acc) -> Acc;
