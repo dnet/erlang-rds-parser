@@ -42,23 +42,14 @@ check_word(Subject, Expected, Pos) ->
 
 cwp1(Subject) -> cwp1(Subject, 0).
 cwp1(<<>>, Acc) -> Acc;
-cwp1(<<Bit:1, Rest/bits>>, Acc) ->
-	Tmp = Acc bsl 1 bor Bit,
-	NewAcc = case Tmp band (1 bsl ?PLEN) of
-		0 -> Tmp;
-		_ -> Tmp bxor ?POLY
-	end,
-	cwp1(Rest, NewAcc).
+cwp1(<<Bit:1, Rest/bits>>, Acc) -> cwp1(Rest, xor_poly(Acc bsl 1 bor Bit)).
 
 cwp2(Reg) -> cwp2(Reg, ?PLEN).
 cwp2(Reg, 0) -> Reg band ((1 bsl ?PLEN) - 1);
-cwp2(Reg, Iter) ->
-	Shifted = Reg bsl 1,
-	NewReg = case Shifted band (1 bsl ?PLEN) of
-		0 -> Shifted;
-		_ -> Shifted bxor ?POLY
-	end,
-	cwp2(NewReg, Iter - 1).
+cwp2(Reg, Iter) -> cwp2(xor_poly(Reg bsl 1), Iter - 1).
+
+xor_poly(X) when X band (1 bsl ?PLEN) =:= 0 -> X;
+xor_poly(X) -> X bxor ?POLY.
 
 offset_word(0) -> 252;
 offset_word(1) -> 408;
